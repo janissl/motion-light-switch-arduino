@@ -11,6 +11,10 @@ const int pinLightSensor = A0;
 
 int stateLightSwitch = LOW;
 
+boolean motionDetected;
+uint32_t lastMotionTime;
+
+
 /*
  * Light intensity ranges:
  *    < 10  = dark
@@ -33,9 +37,13 @@ void setup() {
 
 void loop() {
   int curLightIntensity = analogRead(pinLightSensor);
-  boolean movementDetected = (boolean)digitalRead(pinMotionSensor);
+  motionDetected = (boolean)digitalRead(pinMotionSensor);
 
-  if (curLightIntensity < thresholdLightIntensity && movementDetected) {
+  if (motionDetected) {
+    lastMotionTime = millis();
+  }
+
+  if (motionDetected && curLightIntensity < thresholdLightIntensity) {
     switch_on();
   }
   else {
@@ -46,28 +54,21 @@ void loop() {
 // Switch on the light for a preset duration
 // and check again for a motion after that 
 void switch_on() {
-  boolean continueLightOn = false;
-  uint32_t startTime = millis();
-  uint32_t curTime = startTime;
+  uint32_t curTime = millis();
 
-  while (curTime - startTime < lengthLightOn) {
+  while (curTime - lastMotionTime < lengthLightOn) {
     if (stateLightSwitch == LOW) {
       stateLightSwitch = HIGH;
       digitalWrite(pinLightSwitch, stateLightSwitch);
     }
 
-    boolean movementDetected = (boolean)digitalRead(pinMotionSensor);
+    motionDetected = (boolean)digitalRead(pinMotionSensor);
 
-    if (movementDetected) {
-      continueLightOn = true;
-      break;
+    if (motionDetected) {
+      lastMotionTime = millis();
     }
 
     curTime = millis();
-  }
-
-  if (continueLightOn) {
-    switch_on();
   }
 }
 
