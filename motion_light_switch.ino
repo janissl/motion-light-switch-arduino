@@ -12,7 +12,7 @@ const int pinLightSensor = A0;
 int stateLightSwitch = LOW;
 
 /*
- * Light intesity ranges:
+ * Light intensity ranges:
  *    < 10  = dark
  *    < 200 = dim
  *    < 500 = light
@@ -20,7 +20,7 @@ int stateLightSwitch = LOW;
  *    else  = very bright
  */
 const int thresholdLightIntensity = 200;
-const uint32_t lengthLightOn = 180000;
+const uint32_t lengthLightOn = 180000; // 3 minutes
 
 void switch_on();
 void switch_off();
