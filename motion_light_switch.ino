@@ -41,18 +41,18 @@ void loop() {
     lastMotionTime = millis();
   }
 
-  while (curLightIntensity < thresholdLightIntensity && curTime - lastMotionTime < lengthLightOn) {
-     switch_on();
+  if (curLightIntensity < thresholdLightIntensity) {
+    while (curTime - lastMotionTime < lengthLightOn) {
+      switch_on();
 
-     curLightIntensity = analogRead(pinLightSensor);
+      if ((boolean)digitalRead(pinMotionSensor)) {
+        lastMotionTime = millis();
+      }
 
-     if ((boolean)digitalRead(pinMotionSensor)) {
-      lastMotionTime = millis();
-     }
-
-     curTime = millis();
+      curTime = millis();
+    }
   }
-
+  
   switch_off();
 }
 
